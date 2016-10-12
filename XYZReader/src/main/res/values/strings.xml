@@ -1,0 +1,21 @@
+<resources>
+
+    <string name="app_name">XYZ Reader</string>
+    <string name="welcome_xyz_reader">Welcome to XYZ Reader!</string>
+
+    <string name="action_refresh">Refresh</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_share">Share</string>
+
+    <string name="up">Up</string>
+
+    <string name="article_image">article_image</string>
+    <string name="share_using">Share using...</string>
+    <string name="no_app_available_to_share_content">No app available to share content !</string>
+    <string name="unable_to_load_image">Unable to load image!</string>
+    <string name="action_info">Info</string>
+    <string name="info">Info</string>
+    <string name="info_msg">This app showcases minimal usage of material design.</string>
+    <string name="dismiss">Dismiss</string>
+
+</resources>

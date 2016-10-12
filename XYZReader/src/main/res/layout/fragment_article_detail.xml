@@ -1,0 +1,15 @@
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/text_article_body"
+        style="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:linksClickable="true"
+        android:padding="@dimen/detail_body_text_padding"
+        android:textColor="@color/grey_800"
+        android:textColorLink="?colorAccent" />
+
+</android.support.v4.widget.NestedScrollView>
