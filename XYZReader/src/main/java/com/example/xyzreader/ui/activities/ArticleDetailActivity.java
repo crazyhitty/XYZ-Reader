@@ -9,22 +9,23 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.xyzreader.R;
 import com.example.xyzreader.data.ArticleLoader;
-import com.example.xyzreader.data.ItemsContract;
 import com.example.xyzreader.ui.fragments.ArticleTextFragment;
 import com.example.xyzreader.ui.views.SimpleTextSwitcher;
 import com.example.xyzreader.utils.AnimUtil;
@@ -40,10 +41,6 @@ public class ArticleDetailActivity extends AppCompatActivity
         implements LoaderManager.LoaderCallbacks<Cursor>, View.OnClickListener {
     public static final String ARG_ITEM_POSITION = "item_position";
     private static final String TAG = "ArticleDetailActivity";
-    private Cursor mCursor;
-    private long mStartId;
-    private int mPosition = 0;
-
     private TextView mTxtTitle, mTxtAuthor, mTxtDate;
     private ImageView mImageViewPhoto;
     private ViewPager mPager;
@@ -53,7 +50,12 @@ public class ArticleDetailActivity extends AppCompatActivity
     private CollapsingToolbarLayout mCollapsingToolbarLayout;
     private FrameLayout mFrameLayoutCollapsingToolbar;
     private AppBarLayout mAppBarLayout;
-    private ImageButton mImgBtnShare, mImgBtnPrevious, mImgBtnNext;
+    private FloatingActionButton mFabShare;
+
+    private Cursor mCursor;
+    private int mPosition = 0;
+
+    private boolean mMenuVisible = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,9 +78,7 @@ public class ArticleDetailActivity extends AppCompatActivity
         mSimpleTextSwitcherToolbarTitle = (SimpleTextSwitcher) findViewById(R.id.simple_text_switcher_toolbar_title);
         mPager = (ViewPager) findViewById(R.id.pager);
         mAppBarLayout = (AppBarLayout) findViewById(R.id.app_bar);
-        mImgBtnShare = (ImageButton) findViewById(R.id.image_button_share);
-        mImgBtnPrevious = (ImageButton) findViewById(R.id.image_button_previous);
-        mImgBtnNext = (ImageButton) findViewById(R.id.image_button_next);
+        mFabShare = (FloatingActionButton) findViewById(R.id.fab_share);
     }
 
     private void init(Bundle savedInstanceState) {
@@ -92,7 +92,6 @@ public class ArticleDetailActivity extends AppCompatActivity
 
         if (savedInstanceState == null) {
             if (getIntent() != null && getIntent().getData() != null) {
-                mStartId = ItemsContract.Items.getItemId(getIntent().getData());
                 mPosition = getIntent().getExtras().getInt(ARG_ITEM_POSITION, 0);
             }
         }
@@ -146,9 +145,7 @@ public class ArticleDetailActivity extends AppCompatActivity
                 "Montserrat-Regular.ttf"));
 
         // set click listeners on image buttons
-        mImgBtnShare.setOnClickListener(this);
-        mImgBtnPrevious.setOnClickListener(this);
-        mImgBtnNext.setOnClickListener(this);
+        mFabShare.setOnClickListener(this);
         mFrameLayoutCollapsingToolbar.setOnClickListener(this);
     }
 
@@ -170,6 +167,11 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     private void hideToolbarContents() {
+        mMenuVisible = false;
+        invalidateOptionsMenu();
+
+        mFabShare.show();
+
         mSimpleTextSwitcherToolbarTitle.animate()
                 .alpha(0.0f)
                 .setDuration(300)
@@ -177,6 +179,11 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     private void showToolbarContents() {
+        mMenuVisible = true;
+        invalidateOptionsMenu();
+
+        mFabShare.hide();
+
         mSimpleTextSwitcherToolbarTitle.animate()
                 .alpha(1.0f)
                 .setDuration(300)
@@ -216,18 +223,38 @@ public class ArticleDetailActivity extends AppCompatActivity
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_detail, menu);
+
+        if (!mMenuVisible) {
+            for (int i = 0; i < menu.size(); i++) {
+                menu.getItem(i).setVisible(false);
+            }
+        }
+
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_previous:
+                onPrevious();
+                break;
+            case R.id.action_next:
+                onNext();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
     public void onClick(View view) {
         int viewId = view.getId();
 
         switch (viewId) {
-            case R.id.image_button_share:
+            case R.id.fab_share:
                 onShare();
-                break;
-            case R.id.image_button_previous:
-                onPrevious();
-                break;
-            case R.id.image_button_next:
-                onNext();
                 break;
             case R.id.frame_layout_collapsing_toolbar:
                 mCursor.moveToPosition(mPager.getCurrentItem());

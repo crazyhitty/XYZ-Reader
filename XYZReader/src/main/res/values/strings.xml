@@ -17,5 +17,7 @@
     <string name="info">Info</string>
     <string name="info_msg">This app showcases minimal usage of material design.</string>
     <string name="dismiss">Dismiss</string>
+    <string name="action_previous">Previous</string>
+    <string name="action_next">Next</string>
 
 </resources>
